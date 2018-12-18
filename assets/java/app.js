@@ -4,7 +4,7 @@ $(document).ready(function () {
             question: "Which NFL team has had the most SuperBowl wins?",
             choice: ["Patriots", "Steelers", "Cowboys", "49ers"],
             answer: 1,
-            photo: "assets/images/steelerrings.jpg", //https://i.pinimg.com/originals/3d/17/1a/3d171aad40ffd490f08066c21ff23b73.jpg
+            photo: "assets/images/steelersrings.jpg", //https://i.pinimg.com/originals/3d/17/1a/3d171aad40ffd490f08066c21ff23b73.jpg
         },
         {
             question: "Which NFL team has been to the most SuperBowls?",
@@ -67,6 +67,7 @@ $(document).ready(function () {
     var index;
     var newArray = [];
     var holder = [];
+    // var displayQuestion = [];
 
     $("#reset").hide();
     //click start button to start game
@@ -77,7 +78,8 @@ $(document).ready(function () {
         for (var i = 0; i < options.length; i++) {
             holder.push(options[i]);
         }
-    })
+    });
+
     // $("#reset").hide();
     // //click start button to bigin game 
     // $("#start").on("click", function(){
@@ -118,74 +120,76 @@ $(document).ready(function () {
     }
     //randomly pick questions in array if not already shown
     //display question and loop through through and display possible answers
-    index = Math.floor(Math.random() * options.length);
-    pick = options[index];
+    function displayQuestion() {
+        index = Math.floor(Math.random() * options.length);
+        pick = options[index];
 
-    $("#questionsblock").html("<h2>" + pick.question + "</h2>");
-    for (var i = 0; i < pick.choice.length; i++) {
-        var userChoice = $("<div>");
-        userChoice.addClass("answerchoice");
-        userChoice.html(pick.choice[i]);
-        //assign array position to it so it can check the answer
-        userChoice.attr("data-guessvalue", i);
-        $("#answerblock").append(userChoice);
-    }
-    // click function to select answer and outcomes
-    $(".answerchoice").on("click", function () {
-        //grab array position from userGuess
-        userGuess = parseInt($(this).attr("data-guessvalue"));
-
-        //outcomes of guesses
-        if (userGuess === pick.answer) {
-            stop();
-            correctCount++;
-            userGuess = "";
-            $("#answerblock").html("<p>Correct!</p>");
-            hidepicture();
-
-        } else {
-            stop();
-            wroungCount++;
-            userguess = "";
-            $("#answerblock").html("<p>Wrong! The correct answer is: " + pick.choice[pick.answer] + "</p>");
-            hidepicture();
+        $("#questionsblock").html("<h2>" + pick.question + "</h2>");
+        for (var i = 0; i < pick.choice.length; i++) {
+            var userChoice = $("<div>");
+            userChoice.addClass("answerchoice");
+            userChoice.html(pick.choice[i]);
+            //assign array position to it so it can check the answer
+            userChoice.attr("data-guessvalue", i);
+            $("#answerblock").append(userChoice);
         }
-    })
-})
-function hidepicture() {
-    $("#answerblock").append("<img src=" + pick.photo + ">");
-    //$("#answerblock").append("<img src=" = pick.photo + ">");
-    newArray.push(pick);
-    options.splice(index, 1);
-    var hidpic = setTimeout(function () {
+        // click function to select answer and outcomes
+        $(".answerchoice").on("click", function () {
+            //grab array position from userGuess
+            userGuess = parseInt($(this).attr("data-guessvalue"));
+
+            //outcomes of guesses
+            if (userGuess === pick.answer) {
+                stop();
+                correctCount++;
+                userGuess = "";
+                $("#answerblock").html("<p>Correct!</p>");
+                hidepicture();
+
+            } else {
+                stop();
+                wrongCount++;
+                userguess = "";
+                $("#answerblock").html("<p>Wrong! The correct answer is: " + pick.choice[pick.answer] + "</p>");
+                hidepicture();
+            }
+        })
+    }
+    function hidepicture() {
+        $("#answerblock").append("<img src= " + pick.photo + ">");
+        //$("#answerblock").append("<img src=" = pick.photo + ">");
+        newArray.push(pick);
+        options.splice(index, 1);
+        var hidpic = setTimeout(function () {
+            $("#answerblock").empty();
+            timer = 30;
+            // run the score screen if all questions are answered
+            if ((wrongCount + correctCount + unansweredCount) === questionCount) {
+                $("#questionblock:").empty();
+                $("#questionblock:").html("<h3>Game Over! Here's how you did: </h3>");
+                $("#answerblock").append("<h4> Correct: " + correctCount + "</h4>");
+                $("#answerblock").append("<h4> Incorrect: " + wrongCount + "</h4>");
+                $("#answerblock").append("<h4> Unanswered: " + unansweredCount + "</h4>");
+                $("#reset").show();
+                correctCount = 0;
+                wrongCount = 0;
+                unansweredCount = 0;
+            } else {
+                runTimer();
+                displayQuestion();
+
+            }
+        }, 3000);
+    }
+    $("#reset").on("click", function () {
+        $("#reset").hide();
         $("#answerblock").empty();
-        timer = 30;
-        // run the score screen if all questions are answered
-        if ((wrongCount + correctCount + unansweredCount) === questionCount) {
-            $("#questionblock:").empty();
-            $("#questionblock:").html("<h3>Game Over! Here's how you did: </h3>");
-            $("#answerblock").append("<h4> Correct: " + correctCount + "</h4>");
-            $("#answerblock").append("<h4> Incorrect: " + wrongCount + "</h4>");
-            $("#answerblock").append("<h4> Unanswered: " + unansweredCount + "</h4>");
-            $("#reset").show();
-            correctCount = 0;
-            wrongCount = 0;
-            unansweredCount = 0;
-        } else {
-            runTimer();
-            displayQuestion();
+        $("$questionblock").empty();
+        for (var i = 0; i < holder.length; i++) {
+            options.push(holder[i]);
 
         }
-    }, 3000);
-}
-$("#reset").on("click", function () {
-    $("#reset").hide();
-    $("#answerblock").empty();
-    $("$questionblock").empty();
-    for (var i = 0; i < holder.length; i++) {
-        options.push(holder[i]);
-
-    }
-    runTimer();
-    displayQuestion();
+        runTimer();
+        displayQuestion();
+    })
 })
