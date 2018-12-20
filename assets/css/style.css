@@ -14,8 +14,8 @@ body{
 
 }
 img {
-    max-height: 650px;
-    max-width: 650px;
+    max-height: 80%;
+    max-width: 80%;
 }
 #answerblock { 
     text-align: center;
